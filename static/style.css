@@ -1,0 +1,492 @@
+/* static/style.css - Minimalistic Dark Theme for SMS Spam Detector */
+
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #0a0a0a; /* Deep black */
+    color: #e0e0e0; /* Off-white for readability */
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 20px 0;
+    border-bottom: 1px solid #1a1a1a;
+}
+
+.header-content .logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.logo i {
+    font-size: 2rem;
+    color: #00d4ff; /* Cool cyan accent */
+}
+.logo img {
+    height: 40px;          /* control size */
+    width: auto;
+    margin-right: 10px;
+    vertical-align: middle;
+    filter: invert(1);     /* inverts black to white */
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    font-weight: 300;
+    color: #ffffff;
+    letter-spacing: -0.5px;
+}
+
+.subtitle {
+    color: #888;
+    font-size: 1rem;
+    font-weight: 300;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.detector-card {
+    width: 100%;
+    background: #111; /* Dark gray card */
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 1px solid #1a1a1a;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.detector-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+.card-header h2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: #ffffff;
+    margin-bottom: 8px;
+}
+
+.card-header h2 i {
+    color: #00d4ff;
+}
+
+.card-header p {
+    color: #888;
+    font-size: 0.95rem;
+}
+
+/* Input Section */
+.input-section {
+    margin: 24px 0;
+}
+
+.textarea-container {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #ccc;
+}
+
+#messageInput {
+    width: 100%;
+    min-height: 120px;
+    padding: 16px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    background: #1a1a1a;
+    color: #e0e0e0;
+    font-family: inherit;
+    font-size: 1rem;
+    resize: vertical;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#messageInput:focus {
+    outline: none;
+    border-color: #00d4ff;
+    box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.1);
+}
+
+.char-counter {
+    text-align: right;
+    margin-top: 4px;
+    font-size: 0.85rem;
+    color: #7f8c8d;
+}
+
+.button-container {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.analyze-btn, .clear-btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.analyze-btn {
+    background: linear-gradient(135deg, #00d4ff, #0099cc);
+    color: #fff;
+    flex: 1;
+    max-width: 200px;
+}
+
+.analyze-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+}
+
+.analyze-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.btn-loading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.clear-btn {
+    background: #333;
+    color: #ccc;
+    padding: 12px 20px;
+}
+
+.clear-btn:hover {
+    background: #444;
+    color: #fff;
+}
+
+/* Results Section */
+.result-section {
+    margin: 24px 0;
+    padding: 20px;
+    background: #0f0f0f;
+    border-radius: 12px;
+    border: 1px solid #1a1a1a;
+    transition: opacity 0.3s ease;
+}
+
+.result-section.hidden {
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+.result-header h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.2rem;
+    color: #ffffff;
+    margin-bottom: 16px;
+}
+
+.result-header h3 i {
+    color: #00d4ff;
+}
+
+.prediction-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding: 16px;
+    background: #1a1a1a;
+    border-radius: 8px;
+}
+
+.prediction-icon {
+    font-size: 2.5rem;
+    flex-shrink: 0;
+}
+
+.ham-icon {
+    color: #27ae60; /* Green for ham */
+}
+
+.spam-icon {
+    color: #e74c3c; /* Red for spam */
+}
+
+.prediction-details .prediction-label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.ham-text {
+    color: #27ae60;
+}
+
+.spam-text {
+    color: #e74c3c;
+}
+
+.confidence-label {
+    color: #888;
+    font-size: 0.95rem;
+}
+
+.confidence-bar {
+    position: relative;
+    height: 8px;
+    background: #333;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 16px 0;
+}
+
+.confidence-fill {
+    height: 100%;
+    transition: width 0.5s ease, background 0.3s ease;
+    border-radius: 4px;
+}
+
+.ham-confidence {
+    background: linear-gradient(90deg, #27ae60, #2ecc71);
+}
+
+.spam-confidence {
+    background: linear-gradient(90deg, #e74c3c, #c0392b);
+}
+
+.confidence-text {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: 4px;
+}
+
+.result-explanation h4 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+    color: #ccc;
+    margin-bottom: 12px;
+}
+
+.result-explanation h4 i {
+    color: #00d4ff;
+}
+
+#explanationText {
+    color: #aaa;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+/* Error Section */
+.error-section {
+    margin: 24px 0;
+    padding: 20px;
+    background: #1a0f0f;
+    border: 1px solid #e74c3c;
+    border-radius: 12px;
+    text-align: center;
+    color: #e74c3c;
+    transition: opacity 0.3s ease;
+}
+
+.error-section.hidden {
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+.error-content i {
+    font-size: 2rem;
+    margin-bottom: 8px;
+    display: block;
+}
+
+/* Sample Section */
+.sample-section {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid #1a1a1a;
+}
+
+.sample-section h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1rem;
+    color: #ffffff;
+    margin-bottom: 16px;
+}
+
+.sample-section h3 i {
+    color: #00d4ff;
+}
+
+.sample-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+}
+
+.sample-btn {
+    padding: 12px 16px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    background: #1a1a1a;
+    color: #e0e0e0;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+}
+
+.sample-btn:hover {
+    border-color: #00d4ff;
+    background: #222;
+    transform: translateY(-1px);
+}
+
+.ham-sample i {
+    color: #27ae60;
+}
+
+.spam-sample i {
+    color: #e74c3c;
+}
+
+/* Footer */
+.footer {
+    margin-top: auto;
+    padding: 20px 0;
+    text-align: center;
+    border-top: 1px solid #1a1a1a;
+    margin-top: 40px;
+}
+
+.footer-content p {
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.footer-content i {
+    color: #00d4ff;
+    margin-right: 4px;
+}
+
+.model-status {
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    justify-content: center;
+}
+
+.status-indicator i {
+    font-size: 0.6rem;
+    transition: color 0.3s ease;
+}
+
+.status-indicator.ready i {
+    color: #27ae60;
+}
+
+.status-indicator.error i {
+    color: #e74c3c;
+}
+
+.status-indicator.training i {
+    color: #f39c12;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container {
+        padding: 16px;
+    }
+    
+    .detector-card {
+        padding: 24px;
+    }
+    
+    .header h1 {
+        font-size: 2rem;
+    }
+    
+    .button-container {
+        flex-direction: column;
+    }
+    
+    .prediction-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 12px;
+    }
+    
+    .sample-buttons {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .detector-card {
+        padding: 16px;
+        border-radius: 12px;
+    }
+}

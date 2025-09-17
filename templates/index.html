@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMS Spam Detector</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo-img">
+                    <h1>SMS Spam Detector</h1>
+                </div>
+                <p class="subtitle">Spam/Ham SMS Classification using Machine Learning</p>
+            </div>
+        </header>
+        <main class="main-content">
+            <div class="detector-card">
+                <div class="card-header">
+                    <h2>
+                        <i class="fas fa-search"></i>
+                        Analyze Your Message
+                    </h2>
+                    <p>Enter your SMS or email text below to check if it's spam or legitimate</p>
+                </div>
+                <div class="input-section">
+                    <div class="textarea-container">
+                        <label for="messageInput">Message Text:</label>
+                        <textarea 
+                            id="messageInput" 
+                            placeholder="Paste your message here... 
+
+Examples:
+• Ham: 'Can you pick me up at the airport tomorrow at 3pm?'
+• Spam: 'Free entry in 2 a wkly comp to win FA Cup final tkts. Text FA to 87121'"
+                            rows="6"
+                            maxlength="1000"
+                        ></textarea>
+                        <div class="char-counter">
+                            <span id="charCount">0</span> / 1000 characters
+                        </div>
+                    </div>
+                    <div class="button-container">
+                        <button id="analyzeBtn" class="analyze-btn">
+                            <i class="fas fa-magic"></i>
+                            <span class="btn-text">Analyze Message</span>
+                            <span class="btn-loading hidden">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                Analyzing...
+                            </span>
+                        </button>
+                        <button id="clearBtn" class="clear-btn">
+                            <i class="fas fa-trash"></i>
+                            Clear
+                        </button>
+                    </div>
+                </div>
+                <div id="resultSection" class="result-section hidden">
+                    <div class="result-header">
+                        <h3>
+                            <i class="fas fa-chart-line"></i>
+                            Analysis Results
+                        </h3>
+                    </div>
+                    <div class="result-content">
+                        <div class="prediction-card">
+                            <div id="predictionIcon" class="prediction-icon"></div>
+                            <div class="prediction-details">
+                                <div class="prediction-label">
+                                    Classification: <span id="predictionResult"></span>
+                                </div>
+                                <div class="confidence-label">
+                                    Confidence: <span id="confidenceScore"></span>%
+                                </div>
+                            </div>
+                        </div>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" id="confidenceBar"></div>
+                            <div class="confidence-text">
+                                <span class="confidence-low">Low</span>
+                                <span class="confidence-high">High</span>
+                            </div>
+                        </div>
+                        <div class="result-explanation">
+                            <h4>
+                                <i class="fas fa-info-circle"></i>
+                                What does this mean?
+                            </h4>
+                            <p id="explanationText"></p>
+                        </div>
+                    </div>
+                </div>
+                <div id="errorSection" class="error-section hidden">
+                    <div class="error-content">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p id="errorMessage"></p>
+                    </div>
+                </div>
+                <div class="sample-section">
+                    <h3>
+                        <i class="fas fa-lightbulb"></i>
+                        Try Sample Messages
+                    </h3>
+                    <div class="sample-buttons">
+                        <button class="sample-btn ham-sample" 
+                                data-message="Can you pick me up at the airport tomorrow at 3pm? Thanks!">
+                            <i class="fas fa-check-circle"></i>
+                            Ham Example
+                        </button>
+                        <button class="sample-btn spam-sample" 
+                                data-message="Free entry in 2 a wkly comp to win FA Cup final tkts 21st May 2005. Text FA to 87121 to receive entry question">
+                            <i class="fas fa-times-circle"></i>
+                            Spam Example
+                        </button>
+                        <button class="sample-btn ham-sample" 
+                                data-message="Sorry, I'll call you later. Currently in a meeting.">
+                            <i class="fas fa-check-circle"></i>
+                            Ham Example
+                        </button>
+                        <button class="sample-btn spam-sample" 
+                                data-message="URGENT! You have won a £1000 cash prize! Call 09061701461 to claim now!">
+                            <i class="fas fa-times-circle"></i>
+                            Spam Example
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer class="footer">
+            <div class="footer-content">
+                <p>
+                    <i class="fas fa-brain"></i>
+                    Powered by Machine Learning • Logistic Regression with TF-IDF Vectorization
+                </p>
+                <div class="model-status">
+                    <span id="modelStatus" class="status-indicator">
+                        <i class="fas fa-circle"></i>
+                        Model Status: <span id="statusText">Loading...</span>
+                    </span>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <script>
+        const messageInput = document.getElementById('messageInput');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const charCount = document.getElementById('charCount');
+        const resultSection = document.getElementById('resultSection');
+        const errorSection = document.getElementById('errorSection');
+        const predictionIcon = document.getElementById('predictionIcon');
+        const predictionResult = document.getElementById('predictionResult');
+        const confidenceScore = document.getElementById('confidenceScore');
+        const confidenceBar = document.getElementById('confidenceBar');
+        const explanationText = document.getElementById('explanationText');
+        const errorMessage = document.getElementById('errorMessage');
+        const sampleButtons = document.querySelectorAll('.sample-btn');
+        const btnText = document.querySelector('.btn-text');
+        const btnLoading = document.querySelector('.btn-loading');
+        const modelStatus = document.getElementById('statusText');
+        messageInput.addEventListener('input', function() {
+            const length = this.value.length;
+            charCount.textContent = length;
+            if (length > 900) {
+                charCount.style.color = '#e74c3c';
+            } else if (length > 700) {
+                charCount.style.color = '#f39c12';
+            } else {
+                charCount.style.color = '#7f8c8d';
+            }
+        });
+        clearBtn.addEventListener('click', function() {
+            messageInput.value = '';
+            charCount.textContent = '0';
+            charCount.style.color = '#7f8c8d';
+            hideResults();
+        });
+        sampleButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const message = this.getAttribute('data-message');
+                messageInput.value = message;
+                messageInput.dispatchEvent(new Event('input'));
+                hideResults();
+            });
+        });
+        analyzeBtn.addEventListener('click', async function() {
+            const message = messageInput.value.trim();
+            if (!message) {
+                showError('Please enter a message to analyze.');
+                return;
+            }
+            showLoading(true);
+            hideResults();
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message: message })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    showResults(data);
+                } else {
+                    showError(data.error || 'An error occurred');
+                }
+            } catch (error) {
+                showError('Network error. Please try again.');
+            } finally {
+                showLoading(false);
+            }
+        });
+        function showLoading(loading) {
+            if (loading) {
+                btnText.classList.add('hidden');
+                btnLoading.classList.remove('hidden');
+                analyzeBtn.disabled = true;
+            } else {
+                btnText.classList.remove('hidden');
+                btnLoading.classList.add('hidden');
+                analyzeBtn.disabled = false;
+            }
+        }
+        function showResults(data) {
+            hideError();
+            const isSpam = data.prediction === 'Spam';
+            predictionIcon.innerHTML = isSpam 
+                ? '<i class="fas fa-times-circle spam-icon"></i>' 
+                : '<i class="fas fa-check-circle ham-icon"></i>';
+            predictionResult.textContent = data.prediction;
+            predictionResult.className = isSpam ? 'spam-text' : 'ham-text';
+            confidenceScore.textContent = data.confidence;
+            confidenceBar.style.width = data.confidence + '%';
+            confidenceBar.className = `confidence-fill ${isSpam ? 'spam-confidence' : 'ham-confidence'}`;
+            const explanation = isSpam 
+                ? `This message has been classified as SPAM with ${data.confidence}% confidence. It likely contains promotional content, suspicious links, or other characteristics commonly found in spam messages.`
+                : `This message has been classified as HAM (legitimate) with ${data.confidence}% confidence. It appears to be a normal, legitimate message without spam characteristics.`;
+            explanationText.textContent = explanation;
+            resultSection.classList.remove('hidden');
+        }
+        function showError(message) {
+            hideResults();
+            errorMessage.textContent = message;
+            errorSection.classList.remove('hidden');
+        }
+        function hideResults() {
+            resultSection.classList.add('hidden');
+            hideError();
+        }
+        function hideError() {
+            errorSection.classList.add('hidden');
+        }
+        async function checkModelStatus() {
+            try {
+                const response = await fetch('/model-status');
+                const data = await response.json();
+                if (data.trained) {
+                    modelStatus.textContent = 'Ready';
+                    modelStatus.parentElement.style.color = '#27ae60';
+                } else {
+                    modelStatus.textContent = 'Training...';
+                    modelStatus.parentElement.style.color = '#f39c12';
+                }
+            } catch (error) {
+                modelStatus.textContent = 'Error';
+                modelStatus.parentElement.style.color = '#e74c3c';
+            }
+        }
+        checkModelStatus();
+    </script>
+</body>
+</html>
